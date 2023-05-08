@@ -1,10 +1,12 @@
 import { Router } from 'express';
-import { ping } from './ping';
 import { errorMiddleware } from '../middleware/errorMiddleware';
+import { ping } from './ping';
+import { auth } from './auth';
 
 const router = Router();
 
 router.use('/ping', ping);
+router.use('/auth', auth);
 
 // catch 404
 router.use((_req, res) => {
