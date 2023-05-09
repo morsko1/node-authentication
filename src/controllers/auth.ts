@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { OAuth2Client } from 'google-auth-library';
 import jwt from 'jsonwebtoken';
-import { findOrCreateUser } from '../services/user';
+import { findOrCreateUser, findUser } from '../services/user';
 
 const { CLIENT_ID, ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET } = process.env;
 
@@ -36,7 +36,8 @@ export const authGoogle = async (req: Request, res: Response) => {
     const refreshToken = jwt.sign({ email: user.email }, REFRESH_TOKEN_SECRET as string);
 
     res.cookie('refreshToken', refreshToken, {
-      httpOnly: false,
+      httpOnly: true,
+      secure: false,
       maxAge: REFRESH_TOKEN_MAX_AGE,
     });
 
@@ -47,19 +48,26 @@ export const authGoogle = async (req: Request, res: Response) => {
   }
 };
 
-export const verifyToken = (req: Request, res: Response) => {
+export const verifyToken = async (req: Request, res: Response) => {
   try {
     const accessToken = req.headers.authorization?.split(' ')[1];
     if (!accessToken) throw new Error('no access token');
 
-    jwt.verify(accessToken, ACCESS_TOKEN_SECRET as string);
-    res.sendStatus(200);
+    const decoded = jwt.verify(accessToken, ACCESS_TOKEN_SECRET as string) as { email: string };
+
+    const { email } = decoded;
+
+    const user = await findUser(email);
+
+    if (!user) throw new Error('no user');
+
+    res.json({user: { email: user.email }});
   } catch {
     res.sendStatus(401);
   }
 };
 
-export const refreshToken = (req: Request, res: Response) => {
+export const refreshToken = async (req: Request, res: Response) => {
   try {
     const token = req.cookies.refreshToken;
     if (!token) throw new Error('no refresh token');
@@ -70,7 +78,11 @@ export const refreshToken = (req: Request, res: Response) => {
       expiresIn: '15m',
     });
 
-    res.json({ accessToken });
+    const user = await findUser(decoded.email);
+
+    if (!user) throw new Error('no user');
+
+    res.json({ user: { email: user.email }, accessToken });
   } catch {
     res.sendStatus(401);
   }
