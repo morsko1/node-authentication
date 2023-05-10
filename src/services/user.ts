@@ -1,11 +1,16 @@
 import db from '../db/dbClient';
+import { UserDTO } from '../core/user';
 
-export const findUser = async (email: string) => {
-  const user = await db.user.findUnique({ where: { email } });
+export const findUser = async (email: string): Promise<UserDTO | null> => {
+  const user = await db.user.findUnique({
+    where: { email },
+    select: { email: true },
+  });
+
   return user;
 };
 
-export const findOrCreateUser = async (email: string) => {
+export const findOrCreateUser = async (email: string): Promise<UserDTO> => {
   // Check if user already exists in the database based on email
   const existingUser = await findUser(email);
 
@@ -19,6 +24,9 @@ export const findOrCreateUser = async (email: string) => {
     data: {
       email,
       provider: 'google',
+    },
+    select: {
+      email: true,
     },
   });
 
