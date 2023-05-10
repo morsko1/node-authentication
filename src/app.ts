@@ -15,7 +15,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(cookieParser());
 app.use(json());
-app.use(urlencoded());
+app.use(urlencoded({ extended: true }));
 app.use('/', router);
 
 export { app };
