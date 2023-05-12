@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 import { OAuth2Client } from 'google-auth-library';
 import jwt from 'jsonwebtoken';
-import { findOrCreateUser, findUser } from '../services/user';
-import { UserDTO } from '../core/user';
+import { findOrCreateUser, findUser } from '../services/user.service';
+import { UserDTO } from '../models/user.model';
 
 const { ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET } = process.env;
 

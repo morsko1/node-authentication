@@ -1,5 +1,5 @@
 import db from '../db/dbClient';
-import { UserDTO } from '../core/user';
+import { UserDTO } from '../models/user.model';
 
 export const findUser = async (email: string): Promise<UserDTO | null> => {
   const user = await db.user.findUnique({
@@ -32,4 +32,10 @@ export const findOrCreateUser = async (email: string): Promise<UserDTO> => {
 
   // Return the new user object
   return newUser;
+};
+
+export const getAllUsers = async (): Promise<UserDTO[]> => {
+  const user = await db.user.findMany({ select: { email: true } });
+
+  return user;
 };

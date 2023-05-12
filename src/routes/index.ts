@@ -1,17 +1,17 @@
 import { Router } from 'express';
-import { errorMiddleware } from '../middleware/errorMiddleware';
-import { isAuthenticated } from '../middleware/authMiddleware';
-import { ping } from './ping';
-import { auth } from './auth';
-import { data } from './data';
+import { errorMiddleware } from '../middleware/error.middleware';
+import { isAuthenticated } from '../middleware/auth.middleware';
+import { pingRouter } from './ping.router';
+import { authRouter } from './auth.router';
+import { dataRouter } from './data.router';
 
 const router = Router();
 
-router.use('/ping', ping);
-router.use('/auth', auth);
+router.use('/ping', pingRouter);
+router.use('/auth', authRouter);
 
 // protected route
-router.use('/data', isAuthenticated, data);
+router.use('/data', isAuthenticated, dataRouter);
 
 // catch 404
 router.use((_req, res) => {
