@@ -3,6 +3,8 @@
 This is an example project showcasing JWT authentication using Google account.
 Implemented using Node.js, Express, PostgreSQL, Prisma and JWT.
 
+Here is the repo with authentication client - [authentication-client-react](https://github.com/morsko1/authentication-client-react)
+
 
 ## Prerequisites
 Before running the project, ensure you have the following prerequisites installed on your system:
